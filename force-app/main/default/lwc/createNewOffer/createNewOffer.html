@@ -1,0 +1,153 @@
+<template>
+    <div style="display: none;">{recordId}</div>
+    <div class="slds-modal__header">
+        <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">{label.CreateNewOffer}</h1>
+    </div>
+
+    <div class="edit-form" style="padding-top: 10px;">
+        <lightning-spinner alternative-text="Loading" size="medium" if:true={isLoading}></lightning-spinner>
+        <template if:true={showEditForm}>
+            <lightning-record-edit-form object-api-name="Offer__c" onsubmit={handleSubmit} onsuccess={handleSuccess}
+                onerror={handleError}>
+                <lightning-messages></lightning-messages>
+                <div class="slds-grid slds-wrap">
+                    <div class="slds-grid slds-wrap">
+                        <!-- new offer  -->
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-input-field field-name="Status__c"> </lightning-input-field>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-input-field field-name="Opportunity__c" value={recordId} disabled>
+                            </lightning-input-field>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-input-field field-name="NewUsed__c" value={newUsedDefault}
+                            onchange={changeNewUsed} required> </lightning-input-field>
+                        </div>
+                        <template if:true={showVehicleVINInfo}>
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-input-field field-name="VehicleVIN__c" required> </lightning-input-field>
+                        </div>
+                        </template>
+                        <!-- car config  -->
+                        <template if:true={showVariantInfo}>
+                        <div class="slds-col slds-size_1-of-2">
+                            <div class="slds-form-element slds-p-right_xx-small slds-p-left_xx-small">
+                                <label class="slds-form-element__label" for="modelYears">{label.ModelYear}</label>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-select_container">
+                                        <select class="slds-select" name="modelYears" onchange={changeHandler}>
+                                            <template for:each={data.modelYears} for:item="modelYear">
+                                                <option value={modelYear.value} key={modelYear.value}
+                                                    selected={modelYear.selected}>{modelYear.label}</option>
+                                            </template>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2">
+                            <div class="slds-form-element slds-p-right_xx-small slds-p-left_xx-small">
+                                <label class="slds-form-element__label" for="models">{label.Model}</label>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-select_container">
+                                        <select class="slds-select" name="models" onchange={changeHandler}>
+                                            <template for:each={data.models} for:item="model">
+                                                <option value={model.value} key={model.value} selected={model.selected}>
+                                                    {model.label}</option>
+                                            </template>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        
+                            <div class="slds-col slds-size_1-of-2">
+                                <div class="slds-form-element slds-p-right_xx-small slds-p-left_xx-small">
+                                    <label class="slds-form-element__label" for="salesVersions">{label.Variant}</label>
+                                    <div class="slds-form-element__control">
+                                        <div class="slds-select_container">
+                                            <select class="slds-select" name="salesVersions" onchange={changeHandler}>
+                                                <template for:each={data.salesVersions} for:item="salesVersion">
+                                                    <option value={salesVersion.value} key={salesVersion.value}
+                                                        selected={salesVersion.selected}>{salesVersion.label}</option>
+                                                </template>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <div class="slds-form-element slds-p-right_xx-small slds-p-left_xx-small">
+                                    <label class="slds-form-element__label" for="wheels">{label.Wheel}</label>
+                                    <div class="slds-form-element__control">
+                                        <div class="slds-select_container">
+                                            <select class="slds-select" name="wheels" onchange={changeHandler}>
+                                                <template for:each={data.wheels} for:item="wheel">
+                                                    <option value={wheel.value} key={wheel.name}
+                                                        selected={wheel.selected}>{wheel.label}</option>
+                                                </template>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <div class="slds-form-element slds-p-right_xx-small slds-p-left_xx-small">
+                                    <label class="slds-form-element__label" for="colors">{label.Color}</label>
+                                    <div class="slds-form-element__control">
+                                        <div class="slds-select_container">
+                                            <select class="slds-select" name="colors" onchange={changeHandler}>
+                                                <template for:each={data.colors} for:item="color">
+                                                    <template if:true={color.disabled}>
+                                                        <option value={color.value} key={color.name}
+                                                            disabled={color.disabled} selected={color.selected}>
+                                                            {color.label}</option>
+                                                    </template>
+                                                    <template if:false={color.disabled}>
+                                                        <option value={color.value} key={color.name}
+                                                            selected={color.selected}>{color.label}</option>
+                                                    </template>
+                                                </template>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <div class="slds-form-element slds-p-right_xx-small slds-p-left_xx-small">
+                                    <label class="slds-form-element__label"
+                                        for="upholsteries">{label.Upholstery}</label>
+                                    <div class="slds-form-element__control">
+                                        <div class="slds-select_container">
+                                            <select class="slds-select" name="upholsteries" onchange={changeHandler}>
+                                                <template for:each={data.upholsteries} for:item="upholstery">
+                                                    <template if:true={upholstery.disabled}>
+                                                        <option value={upholstery.value} key={upholstery.name}
+                                                            disabled={upholstery.disabled}
+                                                            selected={upholstery.selected}>
+                                                            {upholstery.label}
+                                                        </option>
+                                                    </template>
+                                                    <template if:false={upholstery.disabled}>
+                                                        <option value={upholstery.value} key={upholstery.name}
+                                                            selected={upholstery.selected}>{upholstery.label}</option>
+                                                    </template>
+                                                </template>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <div class="slds-text-align_right slds-p-top_large">
+                    <lightning-button type="submit" label={label.Submit} variant="brand"></lightning-button>
+                </div>
+            </lightning-record-edit-form>
+        </template>
+    </div>
+</template>
