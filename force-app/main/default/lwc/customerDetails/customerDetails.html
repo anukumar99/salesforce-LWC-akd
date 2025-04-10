@@ -1,0 +1,22 @@
+<template>
+    <lightning-card title="Customer Details" icon-name="standard:account">
+        <template if:true={customer}>
+            <div class="slds-p-horizontal_medium">
+                <p><strong>Name:</strong> {customer.Name}</p>
+                <p><strong>Phone:</strong> {customer.Phone}</p>
+                <p><strong>Email:</strong> {customer.Email}</p>
+                <p><strong>Billing Address:</strong><br />
+                    {customer.BillingStreet}, {customer.BillingCity},<br />
+                    {customer.BillingState} {customer.BillingPostalCode},<br />
+                    {customer.BillingCountry}
+                </p>
+            </div>
+        </template>
+        <template if:true={error}>
+            <c-error-panel errors={error}></c-error-panel>
+        </template>
+        <template if:false={customer}>
+            <div class="slds-p-horizontal_medium">No customer data available.</div>
+        </template>
+    </lightning-card>
+</template>
